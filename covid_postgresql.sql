@@ -3,28 +3,28 @@ where continent is not null and continent <> ''
 order by 3, 4
 
 
---select * from covidvaccinations c2  
---order by 3, 4
+select * from covidvaccinations c2  
+order by 3, 4
 
---select location, date, total_cases, new_cases , total_deaths , population 
---from coviddeaths c 
---order by 1, 2
+select location, date, total_cases, new_cases , total_deaths , population 
+from coviddeaths c 
+order by 1, 2
 
 -- Total cases vs Total deaths
 -- shows the likelihood of occupants of Africa that have contracted covid
-/*select location, date, total_cases, total_deaths, (total_deaths / total_cases) * 100 as death_percentage
+select location, date, total_cases, total_deaths, (total_deaths / total_cases) * 100 as death_percentage
 from coviddeaths c 
 where location ilike '%afri%'
 and continent is not null and continent <> ''
-order by 1, 2*/
+order by 1, 2
 
 -- Total cases vs Population
 -- shows what percentage of population has got covid
-/*select location, date, total_cases, population, cast((total_cases/population) as int) * 100 as infected_pop_percentage
+select location, date, total_cases, population, cast((total_cases/population) as int) * 100 as infected_pop_percentage
 from coviddeaths c 
 where location ilike '%afri%'
 and continent is not null and continent <> ''
-order by 1, 2*/
+order by 1, 2
 
 -- Countries with highest infection rate compared to population
 select location, population, max(total_cases) as highest_infection_count, max((total_cases/population)) * 100 as infected_pop_percentage
@@ -32,6 +32,10 @@ from coviddeaths c
 group by "location", population 
 order by infected_pop_percentage desc
 
+select location, date, population, max(total_cases) as highest_infection_count, max((total_cases/population)) * 100 as infected_pop_percentage
+from coviddeaths c 
+group by "location", population , date
+order by infected_pop_percentage desc
 
 
 -- continents with the highest death count per population
@@ -51,11 +55,11 @@ order by total_Death_count desc
 limit 100
 
 -- global numbers
-select date, sum(new_deaths)/sum(new_cases) * 100 as death_percentage, sum(new_cases) as cases, sum(new_deaths) as deaths
+/*select date, sum(new_deaths)/sum(new_cases) * 100 as death_percentage, sum(new_cases) as cases, sum(new_deaths) as deaths
 from coviddeaths c 
 where continent is not null and continent <> ''
 group by 1
-order by 1,2
+order by 1,2*/
 
 select sum(new_deaths)/sum(new_cases) * 100 as death_percentage, sum(new_cases) as total_cases, sum(new_deaths) as total_deaths
 from coviddeaths c 
@@ -140,3 +144,11 @@ create view people_vaccinated_pop as
 	
 	
 select * from people_vaccinated_pop
+
+-- total death count per location
+select location, sum(new_deaths) as total_death_count
+from coviddeaths c 
+where c.continent is not null and c.continent <> ''
+and location not in ('World', 'European Union', 'International')
+group by location
+order by total_death_count desc
